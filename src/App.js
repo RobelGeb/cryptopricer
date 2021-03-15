@@ -1,89 +1,155 @@
 import './App.css';
 import React, {useState} from 'react';
 import styled from 'styled-components';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+//import { blue } from '@material-ui/core/colors';
+//import Crypto from './Crypto.js';
+import Plot from 'react-plotly.js';
 //import api_key from './api_key.js';
 
 function App() {
-  const [text, setText] = useState('')
   const [loading, setLoading] = useState(false)
   const [price, setPrice] = useState()
+  const [digital, setDigital] = React.useState('');
+  const [physical, setPhysical] = React.useState('');
+  const [xval, setXval] = React.useState();
+  const [yval, setYval] = React.useState();
 
 async function getPrice() {
   setLoading(true)
   setPrice(null)
-  let url = 'https://www.alphavantage.co/query?'
-  url += "function=CURRENCY_EXCHANGE_RATE"
-  url += "&from_currency=BTC"
-  url += "&to_currency=" + text
+  setXval(null)
+  setYval(null)
+  const apikey = 'T0Z3J1PFUYAYPXOE'
+  const urlPrice = `https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${digital}&to_currency=${physical}&apikey=${apikey}`
+  /*
+  url += ""
+  url += "" + digital
+  url += "" + physical
   url += "&apikey=T0Z3J1PFUYAYPXOE"
-  
+  */
+  const urlData = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${digital}&market=${physical}&apikey=${apikey}`;
 
-  const r = await fetch(url)
-  const j = await r.json()
-  console.log(j)
-  if (j["Realtime Currency Exchange Rate"]) {
-    //setPrice(j["Realtime Currency Exchange Rate"]["5. Exchange Rate"])
-    setPrice(j["Realtime Currency Exchange Rate"]["5. Exchange Rate"])
-    setLoading(false)
-    setText('')
-    
+  const rPrice = await fetch(urlPrice)
+  const jPrice = await rPrice.json()
+
+  const rData = await fetch(urlData)
+  const jData = await rData.json()
+  if (jData) {
+    setPrice(jPrice["Realtime Currency Exchange Rate"]["5. Exchange Rate"])
+    //setPrice("hi")
+    let xdata = []
+    let ydata = []
+    for (var key in jData['Time Series (Digital Currency Daily)']) {
+      if (xdata.length < 100) {
+        xdata.push(key);
+        ydata.push(jData['Time Series (Digital Currency Daily)'][key][`1a. open (${physical})`]);  
+      }
+    }
+    setXval(xdata)
+    setYval(ydata)
+    setLoading(false)    
   }
 }
 
+
+const classes = useStyles();
+  const handleDigiChange = (event) => {
+    setDigital(event.target.value);
+  };
+  const handlePhysChange = (event) => {
+    setPhysical(event.target.value);
+  };
+
+
   return (
     <Wrap>
-      <Header>
-      <TextField label="Enter currency to convert to BTC" 
-        variant="outlined" 
-        style={{width:'calc(100% - 200px)'}}
-        value={text} 
-        onChange={e=> setText(e.target.value)}
-        onKeyPress={e=> e.key==='Enter' && getPrice()}
-        autoFocus
-      />
+      <Header>      
+      </Header>
+      <Body>
+      <FormControl className={classes.formControl}>
+        <InputLabel id="digital-select-label">Digital Currency</InputLabel>
+        <Select
+          labelId="digital-select-label"
+          value={digital}
+          onChange={handleDigiChange}
+        >
+          <MenuItem value={"BTC"}>BTC</MenuItem>
+          <MenuItem value={"ETH"}>ETH</MenuItem>
+          <MenuItem value={"DOGE"}>DOGE</MenuItem>
+        </Select>
+      </FormControl>
+
+      <ArrowForwardIosIcon 
+        style={{height:55,
+         margin:10}}
+         color="primary" />
+
+      <FormControl className={classes.formControl}>
+        <InputLabel id="physical-select-label">Physical Currency</InputLabel>
+        <Select
+          labelId="physical-select-label"
+          value={physical}
+          onChange={handlePhysChange}
+        >
+          <MenuItem value={"USD"}>USD</MenuItem>
+          <MenuItem value={"GBP"}>GBP</MenuItem>
+          <MenuItem value={"EUR"}>EUR</MenuItem>
+        </Select>
+      </FormControl>
+
+
+
       <Button variant="contained" 
         color="primary" 
         style={{height:55, marginLeft:10}}
-        disabled={!text || loading}
+        disabled={!physical || !digital}
         onClick={getPrice}
-      >
+      > 
         Search
       </Button>
-      </Header>
-      <Body>
-        {price}
       </Body>
+      <Price>
+        {price &&             
+            `${price} ${physical} to ${digital}`
+        }
+        <Plot
+          data={[
+            {
+              x: xval,
+              y: yval,
+              type: 'candlestick',
+            },
+          ]}
+          layout={ {width: 720, height: 440, title: `${digital} to ${physical} [100 days]`} }
+        />
+      </Price>
     </Wrap>
-
   );
 }
 
-//<Price conversion={price["Realtime Currency Exchange Rate"]}/> {price.map(m=> <Price key={m.id} p={m["Realtime Currency Exchange Rate"]} />)}
 
-//const size = 200
 
-/*
-(this was in the body -> memes.map(m=> <Meme key={m.id} src={m.images.fixed_width.url})
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 150,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+}));
 
-const Meme = styled.img`
-  max-height: ${size}px;
-  max-width: ${size}px;
-  min-width: ${size}px;
-  min-height: ${size}px;
-  object-fit: cover;
-  margin:5px;
-`
-*/
 
-const Price = styled.p`
-  width: 100%;
-  text-align: center;
-`
 
 const Wrap = styled.div`
-  display: flex;
+  //background: linear-gradient(90deg, #ffffff 0%, #ffffff 100%);  display: flex;
   flex-direction: column;
   width: 100%;
   height: 100vh;
@@ -98,9 +164,21 @@ const Header = styled.header`
 
 const Body = styled.div`
   width: 100%;
+  height: 60%;
   display: flex;
-  flex-wrap: wrap;
-  flex: 1;
-  overflow: auto;
+  align-items: center;
+  justify-content: center;
 `
+
+const Price = styled.div`
+  width: 100%;
+  height: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  flex-direction: column;
+  `
+
+
 export default App;
