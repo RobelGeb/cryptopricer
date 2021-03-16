@@ -11,6 +11,8 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import Plot from 'react-plotly.js';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 //import api_key from './api_key.js';
 
 function App() {
@@ -26,14 +28,9 @@ async function getPrice() {
   setPrice(null)
   setXval(null)
   setYval(null)
+  
   const apikey = 'T0Z3J1PFUYAYPXOE'
   const urlPrice = `https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${digital}&to_currency=${physical}&apikey=${apikey}`
-  /*
-  url += ""
-  url += "" + digital
-  url += "" + physical
-  url += "&apikey=T0Z3J1PFUYAYPXOE"
-  */
   const urlData = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${digital}&market=${physical}&apikey=${apikey}`
 
   const rPrice = await fetch(urlPrice)
@@ -41,6 +38,7 @@ async function getPrice() {
 
   const rData = await fetch(urlData)
   const jData = await rData.json()
+  
   if (jData) {
     let pricedata = jPrice["Realtime Currency Exchange Rate"]["5. Exchange Rate"]
     let xdata = []
@@ -75,51 +73,49 @@ const classes = useStyles();
         <div className="logo" />
           ryptoPricer
       </Header>
-      <Body>
       <ThemeProvider theme={theme}>
-        <FormControl className={classes.formControl}>
-          <InputLabel id="digital-select-label">Digital Currency</InputLabel>
-          <Select
-            labelId="digital-select-label"
-            value={digital}
-            onChange={handleDigiChange}
-          >
-            <MenuItem value={"BTC"}>BTC</MenuItem>
-            <MenuItem value={"ETH"}>ETH</MenuItem>
-            <MenuItem value={"DOGE"}>DOGE</MenuItem>
-          </Select>
-        </FormControl>
+        <Body>
+          <FormControl className={classes.formControl}>
+            <InputLabel id="digital-select-label">Digital Currency</InputLabel>
+            <Select
+              labelId="digital-select-label"
+              value={digital}
+              onChange={handleDigiChange}
+            >
+              <MenuItem value={"BTC"}>BTC</MenuItem>
+              <MenuItem value={"ETH"}>ETH</MenuItem>
+              <MenuItem value={"DOGE"}>DOGE</MenuItem>
+            </Select>
+          </FormControl>
 
-        <ArrowForwardIosIcon color="primary"/>
-      
-     
-      <FormControl className={classes.formControl}>
-        <InputLabel id="physical-select-label">Physical Currency</InputLabel>
+          <ArrowForwardIosIcon color="primary"/>
         
-        <Select
-          labelId="physical-select-label"
-          value={physical}
-          onChange={handlePhysChange}
-        >
-          <MenuItem value={"USD"}>USD</MenuItem>
-          <MenuItem value={"GBP"}>GBP</MenuItem>
-          <MenuItem value={"EUR"}>EUR</MenuItem>
-        </Select>
+      
+          <FormControl className={classes.formControl}>
+            <InputLabel id="physical-select-label">Physical Currency</InputLabel>
+          
+          <Select
+            labelId="physical-select-label"
+            value={physical}
+            onChange={handlePhysChange}
+          >
+            <MenuItem value={"USD"}>USD</MenuItem>
+            <MenuItem value={"GBP"}>GBP</MenuItem>
+            <MenuItem value={"EUR"}>EUR</MenuItem>
+          </Select>
 
-      </FormControl>
-
-
-
-      <Button variant="contained" 
-        color="secondary" 
-        style={{height:55, marginLeft:10}}
-        disabled={!physical || !digital}
-        onClick={getPrice}
-      > 
-        Search
-      </Button>
-        </ThemeProvider>
-      </Body>
+          </FormControl>
+          <Button variant="contained" 
+            color="secondary" 
+            style={{height:55, marginLeft:10}}
+            disabled={!physical || !digital}
+            onClick={getPrice}
+          > 
+            Search
+          </Button>
+        </Body>
+      {loading && <LinearProgress color="secondary"/>}
+      </ThemeProvider>
       <Price>
         {price &&             
             `${price} ${physical} to ${digital}`
