@@ -1,8 +1,19 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap");
+
 .App {
   text-align: center;
 }
 
 html {
-  background-color: #424242;
+  background-color: #696969;
 }
 
+.logo {
+  height:2rem;
+  width:2rem;
+  background: url(./img/crypto_symbol.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size:cover;
+  margin-top: 2px;
+}

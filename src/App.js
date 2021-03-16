@@ -8,9 +8,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-//import { blue } from '@material-ui/core/colors';
-//import Crypto from './Crypto.js';
 import Plot from 'react-plotly.js';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 //import api_key from './api_key.js';
 
 function App() {
@@ -34,7 +34,7 @@ async function getPrice() {
   url += "" + physical
   url += "&apikey=T0Z3J1PFUYAYPXOE"
   */
-  const urlData = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${digital}&market=${physical}&apikey=${apikey}`;
+  const urlData = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${digital}&market=${physical}&apikey=${apikey}`
 
   const rPrice = await fetch(urlPrice)
   const jPrice = await rPrice.json()
@@ -42,16 +42,17 @@ async function getPrice() {
   const rData = await fetch(urlData)
   const jData = await rData.json()
   if (jData) {
-    setPrice(jPrice["Realtime Currency Exchange Rate"]["5. Exchange Rate"])
-    //setPrice("hi")
+    let pricedata = jPrice["Realtime Currency Exchange Rate"]["5. Exchange Rate"]
     let xdata = []
     let ydata = []
     for (var key in jData['Time Series (Digital Currency Daily)']) {
       if (xdata.length < 100) {
-        xdata.push(key);
-        ydata.push(jData['Time Series (Digital Currency Daily)'][key][`1a. open (${physical})`]);  
+        xdata.push(key)
+        ydata.push(jData['Time Series (Digital Currency Daily)'][key][`1a. open (${physical})`]) 
       }
     }
+    pricedata = parseFloat(pricedata).toFixed(2)
+    setPrice(pricedata)
     setXval(xdata)
     setYval(ydata)
     setLoading(false)    
@@ -70,29 +71,31 @@ const classes = useStyles();
 
   return (
     <Wrap>
-      <Header>      
+      <Header>
+        <div className="logo" />
+          ryptoPricer
       </Header>
       <Body>
-      <FormControl className={classes.formControl}>
-        <InputLabel id="digital-select-label">Digital Currency</InputLabel>
-        <Select
-          labelId="digital-select-label"
-          value={digital}
-          onChange={handleDigiChange}
-        >
-          <MenuItem value={"BTC"}>BTC</MenuItem>
-          <MenuItem value={"ETH"}>ETH</MenuItem>
-          <MenuItem value={"DOGE"}>DOGE</MenuItem>
-        </Select>
-      </FormControl>
+      <ThemeProvider theme={theme}>
+        <FormControl className={classes.formControl}>
+          <InputLabel id="digital-select-label">Digital Currency</InputLabel>
+          <Select
+            labelId="digital-select-label"
+            value={digital}
+            onChange={handleDigiChange}
+          >
+            <MenuItem value={"BTC"}>BTC</MenuItem>
+            <MenuItem value={"ETH"}>ETH</MenuItem>
+            <MenuItem value={"DOGE"}>DOGE</MenuItem>
+          </Select>
+        </FormControl>
 
-      <ArrowForwardIosIcon 
-        style={{height:55,
-         margin:10}}
-         color="primary" />
-
+        <ArrowForwardIosIcon color="primary"/>
+      
+     
       <FormControl className={classes.formControl}>
         <InputLabel id="physical-select-label">Physical Currency</InputLabel>
+        
         <Select
           labelId="physical-select-label"
           value={physical}
@@ -102,18 +105,20 @@ const classes = useStyles();
           <MenuItem value={"GBP"}>GBP</MenuItem>
           <MenuItem value={"EUR"}>EUR</MenuItem>
         </Select>
+
       </FormControl>
 
 
 
       <Button variant="contained" 
-        color="primary" 
+        color="secondary" 
         style={{height:55, marginLeft:10}}
         disabled={!physical || !digital}
         onClick={getPrice}
       > 
         Search
       </Button>
+        </ThemeProvider>
       </Body>
       <Price>
         {price &&             
@@ -125,13 +130,29 @@ const classes = useStyles();
           {
             x: xval,
             y: yval,
+            marker: {color: '#ffd54f'},
           },
         ]}
-        layout={ {width: 720, 
-          height: 440, 
-          title: `${digital} in ${physical} [100 days]`,
-          plot_bgcolor:"black",
-          paper_bgcolor:"#696969"
+        layout={ {
+          width: 1000, 
+          height: 600, 
+          title: {
+            text: `${digital} in ${physical} [100 days]`,
+            font: {
+              color:"#ced7db",
+            },
+          },
+          plot_bgcolor:"#212121",
+          paper_bgcolor:"#696969",
+          colorway:"gold",
+          xaxis: {
+            gridcolor:"#ced7db",
+            color:"#ced7db",
+          },
+          yaxis: {
+            gridcolor:"#ced7db",
+            color:"#ced7db",
+          },
         } }
         />
       }
@@ -139,6 +160,8 @@ const classes = useStyles();
     </Wrap>
   );
 }
+
+//
 
 
 
@@ -150,12 +173,42 @@ const useStyles = makeStyles((theme) => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  palette: {
+    primary: {
+      light: '#ffffff',
+      main: '#ced7db',
+      dark: '#9da6a9',
+      contrastText: '#000000',
+    },
+    secondary: {
+      light: '#ffffb0',
+      main: '#ffca28',
+      dark: '#cab350',
+      contrastText: '#000000',
+    },
+  },
 }));
 
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#ffffff',
+      main: '#ced7db',
+      dark: '#9da6a9',
+      contrastText: '#000000',
+    },
+    secondary: {
+      light: '#ffffb0',
+      main: '#ffe57f',
+      dark: '#cab350',
+      contrastText: '#000000',
+    },
+  },
+});
 
 
 const Wrap = styled.div`
-
+  display: flex;
   flex-direction: column;
   width: 100%;
   height: 100vh;
@@ -166,6 +219,11 @@ const Header = styled.header`
   min-height: 50px;
   padding: 10px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  color: #ebc036;
+  font-size: 2rem;
+  font-family: 'Roboto';
 `
 
 const Body = styled.div`
@@ -184,6 +242,7 @@ const Price = styled.div`
   justify-content: center;
   font-size: 2rem;
   flex-direction: column;
+  color: #ced7db;
   `
 
 
