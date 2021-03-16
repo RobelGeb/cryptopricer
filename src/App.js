@@ -119,16 +119,22 @@ const classes = useStyles();
         {price &&             
             `${price} ${physical} to ${digital}`
         }
+      {xval &&
         <Plot
-          data={[
-            {
-              x: xval,
-              y: yval,
-              type: 'candlestick',
-            },
-          ]}
-          layout={ {width: 720, height: 440, title: `${digital} to ${physical} [100 days]`} }
+        data={[
+          {
+            x: xval,
+            y: yval,
+          },
+        ]}
+        layout={ {width: 720, 
+          height: 440, 
+          title: `${digital} in ${physical} [100 days]`,
+          plot_bgcolor:"black",
+          paper_bgcolor:"#696969"
+        } }
         />
+      }
       </Price>
     </Wrap>
   );
@@ -149,7 +155,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const Wrap = styled.div`
-  //background: linear-gradient(90deg, #ffffff 0%, #ffffff 100%);  display: flex;
+
   flex-direction: column;
   width: 100%;
   height: 100vh;
@@ -164,7 +170,7 @@ const Header = styled.header`
 
 const Body = styled.div`
   width: 100%;
-  height: 60%;
+  height: 30%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -172,7 +178,7 @@ const Body = styled.div`
 
 const Price = styled.div`
   width: 100%;
-  height: 30%;
+  height: 60%;
   display: flex;
   align-items: center;
   justify-content: center;
