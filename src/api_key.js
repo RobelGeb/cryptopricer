@@ -1,1 +1,3 @@
-export const api_key = "apikey=T0Z3J1PFUYAYPXOE"
+const apikey = "T0Z3J1PFUYAYPXOE"
+
+export {apikey}

@@ -12,30 +12,30 @@ import Plot from 'react-plotly.js';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
-
-//import api_key from './api_key.js';
+import { apikey } from './api_key.js';
 
 function App() {
   const [loading, setLoading] = useState(false)
-  const [price, setPrice] = useState()
+  const [price, setPrice] = useState(null)
   const [digital, setDigital] = React.useState('');
   const [physical, setPhysical] = React.useState('');
-  const [xval, setXval] = React.useState();
-  const [yvalopen, setYvalopen] = React.useState();
-  const [yvalclose, setYvalclose] = React.useState();
-  const [yvallow, setYvallow] = React.useState();
-  const [yvalhi, setYvalhi] = React.useState();
+  const [xval, setXval] = React.useState(null);
+  const [yvalopen, setYvalopen] = React.useState(null);
+  const [yvalclose, setYvalclose] = React.useState(null);
+  const [yvallow, setYvallow] = React.useState(null);
+  const [yvalhi, setYvalhi] = React.useState(null);
 
 async function getPrice() {
   setLoading(true)
+  /*
   setPrice(null)
   setXval(null)
   setYvalopen(null)
   setYvalclose(null)
   setYvallow(null)
   setYvalhi(null)
-  
-  const apikey = 'T0Z3J1PFUYAYPXOE'
+  */
+
   const urlPrice = `https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${digital}&to_currency=${physical}&apikey=${apikey}`
   const urlData = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${digital}&market=${physical}&apikey=${apikey}`
 
@@ -103,13 +103,10 @@ const classes = useStyles();
             >
               <MenuItem value={"BTC"}>฿ BTC</MenuItem>
               <MenuItem value={"ETH"}>Ξ ETH</MenuItem>
-              <MenuItem value={"ETH"}>UNI</MenuItem>
-              <MenuItem value={"ETH"}>Ł LTC</MenuItem>
-              <MenuItem value={"ETH"}>LINK</MenuItem>
-              <MenuItem value={"ETH"}>Ƀ BCH</MenuItem>
-              <MenuItem value={"ETH"}>USDC</MenuItem>
-              <MenuItem value={"ETH"}>XLM</MenuItem>
-              <MenuItem value={"ETH"}> WBTC</MenuItem>
+              <MenuItem value={"LTC"}>Ł LTC</MenuItem>
+              <MenuItem value={"LINK"}>LINK</MenuItem>
+              <MenuItem value={"BCH"}>Ƀ BCH</MenuItem>
+              <MenuItem value={"XLM"}>XLM</MenuItem>
               <MenuItem value={"DOGE"}>Ɖ DOGE</MenuItem>
             </Select>
           </FormControl>
@@ -145,7 +142,7 @@ const classes = useStyles();
       </ThemeProvider>
       <Price>
         {price &&             
-            `${price} ${physical} to ${digital}`
+            `${price} ${physical} to 1 ${digital}`
         }
       {xval &&
         <Plot
