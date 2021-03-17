@@ -73,6 +73,9 @@ const classes = useStyles();
         <div className="logo" />
           ryptoPricer
       </Header>
+      <Subtitle>
+        Your tool for crypto conversion and price data!
+      </Subtitle>
       <ThemeProvider theme={theme}>
         <Body>
           <FormControl className={classes.formControl}>
@@ -82,9 +85,9 @@ const classes = useStyles();
               value={digital}
               onChange={handleDigiChange}
             >
-              <MenuItem value={"BTC"}>BTC</MenuItem>
-              <MenuItem value={"ETH"}>ETH</MenuItem>
-              <MenuItem value={"DOGE"}>DOGE</MenuItem>
+              <MenuItem value={"BTC"}>฿ BTC</MenuItem>
+              <MenuItem value={"ETH"}>Ξ ETH</MenuItem>
+              <MenuItem value={"DOGE"}>Ɖ DOGE</MenuItem>
             </Select>
           </FormControl>
 
@@ -99,9 +102,9 @@ const classes = useStyles();
             value={physical}
             onChange={handlePhysChange}
           >
-            <MenuItem value={"USD"}>USD</MenuItem>
-            <MenuItem value={"GBP"}>GBP</MenuItem>
-            <MenuItem value={"EUR"}>EUR</MenuItem>
+            <MenuItem value={"USD"}>$ USD</MenuItem>
+            <MenuItem value={"GBP"}>£ GBP</MenuItem>
+            <MenuItem value={"EUR"}>€ EUR</MenuItem>
           </Select>
 
           </FormControl>
@@ -157,7 +160,6 @@ const classes = useStyles();
   );
 }
 
-//
 
 
 
@@ -168,6 +170,7 @@ const useStyles = makeStyles((theme) => ({
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
+    color: '#ced7db',
   },
   palette: {
     primary: {
@@ -221,6 +224,15 @@ const Header = styled.header`
   font-size: 2rem;
   font-family: 'Roboto';
 `
+
+const Subtitle = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-size: 1.2rem;
+  margin-left: 15px;
+  color: #ebc036;
+`
+
 
 const Body = styled.div`
   width: 100%;
