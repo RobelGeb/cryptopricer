@@ -21,13 +21,19 @@ function App() {
   const [digital, setDigital] = React.useState('');
   const [physical, setPhysical] = React.useState('');
   const [xval, setXval] = React.useState();
-  const [yval, setYval] = React.useState();
+  const [yvalopen, setYvalopen] = React.useState();
+  const [yvalclose, setYvalclose] = React.useState();
+  const [yvallow, setYvallow] = React.useState();
+  const [yvalhi, setYvalhi] = React.useState();
 
 async function getPrice() {
   setLoading(true)
   setPrice(null)
   setXval(null)
-  setYval(null)
+  setYvalopen(null)
+  setYvalclose(null)
+  setYvallow(null)
+  setYvalhi(null)
   
   const apikey = 'T0Z3J1PFUYAYPXOE'
   const urlPrice = `https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${digital}&to_currency=${physical}&apikey=${apikey}`
@@ -42,17 +48,26 @@ async function getPrice() {
   if (jData) {
     let pricedata = jPrice["Realtime Currency Exchange Rate"]["5. Exchange Rate"]
     let xdata = []
-    let ydata = []
+    let open = []
+    let close = []
+    let low = []
+    let hi = []
     for (var key in jData['Time Series (Digital Currency Daily)']) {
       if (xdata.length < 100) {
         xdata.push(key)
-        ydata.push(jData['Time Series (Digital Currency Daily)'][key][`1a. open (${physical})`]) 
+        open.push(jData['Time Series (Digital Currency Daily)'][key][`1a. open (${physical})`]) 
+        close.push(jData['Time Series (Digital Currency Daily)'][key][`4a. close (${physical})`])
+        low.push(jData['Time Series (Digital Currency Daily)'][key][`3a. low (${physical})`])
+        hi.push(jData['Time Series (Digital Currency Daily)'][key][`2a. high (${physical})`])
       }
     }
     pricedata = parseFloat(pricedata).toFixed(2)
     setPrice(pricedata)
     setXval(xdata)
-    setYval(ydata)
+    setYvalopen(open)
+    setYvalclose(close)
+    setYvallow(low)
+    setYvalhi(hi)
     setLoading(false)    
   }
 }
@@ -84,9 +99,17 @@ const classes = useStyles();
               labelId="digital-select-label"
               value={digital}
               onChange={handleDigiChange}
+              className={classes.select}
             >
               <MenuItem value={"BTC"}>฿ BTC</MenuItem>
               <MenuItem value={"ETH"}>Ξ ETH</MenuItem>
+              <MenuItem value={"ETH"}>UNI</MenuItem>
+              <MenuItem value={"ETH"}>Ł LTC</MenuItem>
+              <MenuItem value={"ETH"}>LINK</MenuItem>
+              <MenuItem value={"ETH"}>Ƀ BCH</MenuItem>
+              <MenuItem value={"ETH"}>USDC</MenuItem>
+              <MenuItem value={"ETH"}>XLM</MenuItem>
+              <MenuItem value={"ETH"}> WBTC</MenuItem>
               <MenuItem value={"DOGE"}>Ɖ DOGE</MenuItem>
             </Select>
           </FormControl>
@@ -96,18 +119,18 @@ const classes = useStyles();
       
           <FormControl className={classes.formControl}>
             <InputLabel id="physical-select-label">Physical Currency</InputLabel>
-          
-          <Select
-            labelId="physical-select-label"
-            value={physical}
-            onChange={handlePhysChange}
-          >
-            <MenuItem value={"USD"}>$ USD</MenuItem>
-            <MenuItem value={"GBP"}>£ GBP</MenuItem>
-            <MenuItem value={"EUR"}>€ EUR</MenuItem>
-          </Select>
-
+            <Select
+              labelId="physical-select-label"
+              value={physical}
+              onChange={handlePhysChange}
+              className={classes.select}
+            >
+              <MenuItem value={"USD"}>$ USD</MenuItem>
+              <MenuItem value={"GBP"}>£ GBP</MenuItem>
+              <MenuItem value={"EUR"}>€ EUR</MenuItem>
+            </Select>
           </FormControl>
+
           <Button variant="contained" 
             color="secondary" 
             style={{height:55, marginLeft:10}}
@@ -116,6 +139,7 @@ const classes = useStyles();
           > 
             Search
           </Button>
+
         </Body>
       {loading && <LinearProgress color="secondary"/>}
       </ThemeProvider>
@@ -128,13 +152,20 @@ const classes = useStyles();
         data={[
           {
             x: xval,
-            y: yval,
-            marker: {color: '#ffd54f'},
+            close: yvalclose,
+            high: yvalhi,
+            low: yvallow,
+            open: yvalopen,
+            increasing: {line: {color: '#ced7db'}},
+            decreasing: {line: {color: 'red'}},
+            type: 'candlestick',
+            xaxis: 'x',
+            yaxis: 'y',
           },
         ]}
         layout={ {
           width: 1000, 
-          height: 600, 
+          height: 700, 
           title: {
             text: `${digital} in ${physical} [100 days]`,
             font: {
@@ -142,16 +173,20 @@ const classes = useStyles();
             },
           },
           plot_bgcolor:"#212121",
-          paper_bgcolor:"#696969",
+          paper_bgcolor:"#888888",
           colorway:"gold",
           xaxis: {
             gridcolor:"#ced7db",
             color:"#ced7db",
+            rangeslider: {
+              visible: true,
+            }
           },
           yaxis: {
             gridcolor:"#ced7db",
             color:"#ced7db",
           },
+          dragmode: 'pan',
         } }
         />
       }
@@ -167,25 +202,15 @@ const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
     minWidth: 150,
+    color: "white",
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
-    color: '#ced7db',
   },
-  palette: {
-    primary: {
-      light: '#ffffff',
-      main: '#ced7db',
-      dark: '#9da6a9',
-      contrastText: '#000000',
-    },
-    secondary: {
-      light: '#ffffb0',
-      main: '#ffca28',
-      dark: '#cab350',
-      contrastText: '#000000',
-    },
-  },
+  select: {
+    color: "white",
+    borderColor: "white",
+  }
 }));
 
 const theme = createMuiTheme({
@@ -236,7 +261,7 @@ const Subtitle = styled.div`
 
 const Body = styled.div`
   width: 100%;
-  height: 30%;
+  height: 40%;
   display: flex;
   align-items: center;
   justify-content: center;
