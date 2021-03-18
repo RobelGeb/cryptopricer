@@ -93,6 +93,7 @@ const classes = useStyles();
               onChange={handleDigiChange}
               className={classes.select}
             >
+              <MenuItem value={null}>NONE</MenuItem>
               <MenuItem value={"BTC"}>฿ BTC</MenuItem>
               <MenuItem value={"ETH"}>Ξ ETH</MenuItem>
               <MenuItem value={"LTC"}>Ł LTC</MenuItem>
@@ -114,6 +115,7 @@ const classes = useStyles();
               onChange={handlePhysChange}
               className={classes.select}
             >
+              <MenuItem value={null}>NONE</MenuItem>
               <MenuItem value={"USD"}>$ USD</MenuItem>
               <MenuItem value={"GBP"}>£ GBP</MenuItem>
               <MenuItem value={"EUR"}>€ EUR</MenuItem>
