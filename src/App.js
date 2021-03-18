@@ -27,14 +27,6 @@ function App() {
 
 async function getPrice() {
   setLoading(true)
-  /*
-  setPrice(null)
-  setXval(null)
-  setYvalopen(null)
-  setYvalclose(null)
-  setYvallow(null)
-  setYvalhi(null)
-  */
 
   const urlPrice = `https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${digital}&to_currency=${physical}&apikey=${apikey}`
   const urlData = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${digital}&market=${physical}&apikey=${apikey}`
@@ -220,7 +212,7 @@ const theme = createMuiTheme({
     },
     secondary: {
       light: '#ffffb0',
-      main: '#ffe57f',
+      main: '#ebc036',
       dark: '#cab350',
       contrastText: '#000000',
     },
