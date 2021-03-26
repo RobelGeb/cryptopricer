@@ -252,7 +252,7 @@ const Subtitle = styled.div`
 
 const Body = styled.div`
   width: 100%;
-  height: 40%;
+  height: 10%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -260,7 +260,7 @@ const Body = styled.div`
 
 const Price = styled.div`
   width: 100%;
-  height: 60%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
